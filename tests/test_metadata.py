@@ -12,7 +12,7 @@ import browsertrace
 
 def test_package_version_matches_module_version():
     project_root = Path(__file__).resolve().parents[1]
-    pyproject = tomllib.loads((project_root / "pyproject.toml").read_text())
+    pyproject = tomllib.loads((project_root / "pyproject.toml").read_text(encoding="utf-8"))
 
     assert pyproject["project"]["version"] == "0.1.17"
     assert pyproject["project"]["version"] == browsertrace.__version__
@@ -33,7 +33,7 @@ def test_public_docs_do_not_reference_stale_v011_release():
     stale_mentions = [
         str(path.relative_to(project_root))
         for path in public_docs
-        if stale_release.search(path.read_text())
+        if stale_release.search(path.read_text(encoding="utf-8"))
     ]
 
     assert stale_mentions == []
@@ -41,7 +41,7 @@ def test_public_docs_do_not_reference_stale_v011_release():
 
 def test_pyproject_has_launch_discovery_metadata():
     project_root = Path(__file__).resolve().parents[1]
-    pyproject = tomllib.loads((project_root / "pyproject.toml").read_text())
+    pyproject = tomllib.loads((project_root / "pyproject.toml").read_text(encoding="utf-8"))
     project = pyproject["project"]
 
     keywords = set(project["keywords"])
@@ -71,7 +71,7 @@ def test_pyproject_has_launch_discovery_metadata():
 
 def test_publish_workflow_is_ready_for_trusted_publishing():
     project_root = Path(__file__).resolve().parents[1]
-    workflow = (project_root / ".github" / "workflows" / "publish.yml").read_text()
+    workflow = (project_root / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
 
     assert "workflow_dispatch:" in workflow
     assert re.search(r"publish:\n(?: {4}.*\n)* {4}environment: pypi", workflow)
@@ -86,7 +86,7 @@ def test_publish_workflow_is_ready_for_trusted_publishing():
 
 def test_readme_uses_pypi_install_after_publish():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -106,7 +106,7 @@ def test_launch_plan_uses_pypi_install_after_publish():
         / "superpowers"
         / "plans"
         / "2026-05-09-browsertrace-launch-readiness.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "pip install browsertrace" in plan
     assert 'pip install "browsertrace[ui]"' in plan
@@ -116,7 +116,7 @@ def test_launch_plan_uses_pypi_install_after_publish():
 
 def test_readme_shows_pypi_badge_after_publish():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     header = readme.split("![demo]", 1)[0]
 
     assert "[![PyPI]" in header
@@ -126,7 +126,7 @@ def test_readme_shows_pypi_badge_after_publish():
 
 def test_homepage_has_software_source_code_json_ld():
     project_root = Path(__file__).resolve().parents[1]
-    homepage = (project_root / "docs" / "index.html").read_text()
+    homepage = (project_root / "docs" / "index.html").read_text(encoding="utf-8")
 
     match = re.search(
         r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
@@ -162,7 +162,7 @@ def test_core_guides_have_tech_article_json_ld():
     ]
 
     for filename, headline in guide_pages:
-        page = (project_root / "docs" / filename).read_text()
+        page = (project_root / "docs" / filename).read_text(encoding="utf-8")
         match = re.search(
             r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
             page,
@@ -182,8 +182,8 @@ def test_windows_powershell_first_run_docs_cover_env_vars():
     project_root = Path(__file__).resolve().parents[1]
     docs_text = "\n".join(
         [
-            (project_root / "README.md").read_text(),
-            (project_root / "examples" / "README.md").read_text(),
+            (project_root / "README.md").read_text(encoding="utf-8"),
+            (project_root / "examples" / "README.md").read_text(encoding="utf-8"),
         ]
     )
 
@@ -196,7 +196,7 @@ def test_windows_powershell_first_run_docs_cover_env_vars():
 
 def test_examples_readme_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    examples = (project_root / "examples" / "README.md").read_text()
+    examples = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in examples
     assert "CONTRIBUTING.md#first-pr-recipe" in examples
@@ -210,7 +210,7 @@ def test_issue_chooser_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
     config = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "config.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "name: First PR Recipe" in config
     assert (
@@ -227,7 +227,7 @@ def test_issue_chooser_links_code_of_conduct_for_issue_expectations():
     project_root = Path(__file__).resolve().parents[1]
     config = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "config.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "name: Code of Conduct" in config
     assert (
@@ -241,7 +241,7 @@ def test_issue_chooser_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
     config = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "config.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "name: Security Policy" in config
     assert (
@@ -254,7 +254,7 @@ def test_issue_chooser_links_security_policy_for_sensitive_reports():
 
 def test_homepage_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    homepage = (project_root / "docs" / "index.html").read_text()
+    homepage = (project_root / "docs" / "index.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in homepage
     assert (
@@ -269,7 +269,7 @@ def test_homepage_links_first_pr_recipe_for_small_contributions():
 
 def test_homepage_names_current_adapter_surfaces():
     project_root = Path(__file__).resolve().parents[1]
-    homepage = (project_root / "docs" / "index.html").read_text()
+    homepage = (project_root / "docs" / "index.html").read_text(encoding="utf-8")
 
     assert "Browser Use run hooks" in homepage
     assert "Stagehand wrapper" in homepage
@@ -297,7 +297,7 @@ def test_homepage_and_readme_link_failure_patterns_page():
 
 def test_homepage_intro_uses_mobile_friendly_copy():
     project_root = Path(__file__).resolve().parents[1]
-    homepage = (project_root / "docs" / "index.html").read_text()
+    homepage = (project_root / "docs" / "index.html").read_text(encoding="utf-8")
 
     assert "Replay failed browser runs" in homepage
     assert "Replay an AI browser-agent failure</h1>" not in homepage
@@ -323,7 +323,7 @@ def test_homepage_intro_uses_mobile_friendly_copy():
 
 def test_homepage_intro_uses_natural_title_wrapping():
     project_root = Path(__file__).resolve().parents[1]
-    homepage = (project_root / "docs" / "index.html").read_text()
+    homepage = (project_root / "docs" / "index.html").read_text(encoding="utf-8")
     h1_css = re.search(r"h1\s*\{(?P<body>.*?)\n    \}", homepage, re.S)
     dek_html = re.search(r'<p class="dek">(?P<body>.*?)</p>', homepage, re.S)
 
@@ -349,7 +349,7 @@ def test_homepage_mobile_title_has_line_length_guard():
 
 def test_homepage_intro_actions_do_not_squeeze_copy_column():
     project_root = Path(__file__).resolve().parents[1]
-    homepage = (project_root / "docs" / "index.html").read_text()
+    homepage = (project_root / "docs" / "index.html").read_text(encoding="utf-8")
 
     intro_css = re.search(r"\.intro\s*\{(?P<body>.*?)\n    \}", homepage, re.S)
     actions_css = re.search(r"\.actions\s*\{(?P<body>.*?)\n    \}", homepage, re.S)
@@ -395,14 +395,14 @@ def test_homepage_mobile_nav_and_actions_do_not_push_trace_down():
 
 def test_homepage_intro_no_longer_needs_tablet_sidebar_override():
     project_root = Path(__file__).resolve().parents[1]
-    homepage = (project_root / "docs" / "index.html").read_text()
+    homepage = (project_root / "docs" / "index.html").read_text(encoding="utf-8")
 
     assert "@media (max-width: 980px)" not in homepage
 
 
 def test_integrations_page_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    integrations = (project_root / "docs" / "integrations.html").read_text()
+    integrations = (project_root / "docs" / "integrations.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in integrations
     assert (
@@ -417,7 +417,7 @@ def test_integrations_page_links_first_pr_recipe_for_small_contributions():
 
 def test_integrations_page_has_discovery_metadata():
     project_root = Path(__file__).resolve().parents[1]
-    integrations = (project_root / "docs" / "integrations.html").read_text()
+    integrations = (project_root / "docs" / "integrations.html").read_text(encoding="utf-8")
 
     assert (
         '<link rel="alternate" type="text/plain" title="llms.txt" href="./llms.txt">'
@@ -442,7 +442,7 @@ def test_integrations_page_has_discovery_metadata():
 
 def test_browser_use_guide_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    guide = (project_root / "docs" / "browser-use-debugging.html").read_text()
+    guide = (project_root / "docs" / "browser-use-debugging.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in guide
     assert (
@@ -457,7 +457,7 @@ def test_browser_use_guide_links_first_pr_recipe_for_small_contributions():
 
 def test_stagehand_guide_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    guide = (project_root / "docs" / "stagehand-debugging.html").read_text()
+    guide = (project_root / "docs" / "stagehand-debugging.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in guide
     assert (
@@ -472,7 +472,7 @@ def test_stagehand_guide_links_first_pr_recipe_for_small_contributions():
 
 def test_skyvern_guide_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    guide = (project_root / "docs" / "skyvern-debugging.html").read_text()
+    guide = (project_root / "docs" / "skyvern-debugging.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in guide
     assert (
@@ -487,7 +487,7 @@ def test_skyvern_guide_links_first_pr_recipe_for_small_contributions():
 
 def test_playwright_llm_guide_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    guide = (project_root / "docs" / "playwright-llm-debugging.html").read_text()
+    guide = (project_root / "docs" / "playwright-llm-debugging.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in guide
     assert (
@@ -512,7 +512,7 @@ def test_integration_guides_link_share_safe_export_recipe():
         "stagehand-debugging.html",
         "skyvern-debugging.html",
     ]:
-        guide = (project_root / "docs" / filename).read_text()
+        guide = (project_root / "docs" / filename).read_text(encoding="utf-8")
         share_section = guide.split("<h2>Share only what is safe</h2>", 1)[1].split(
             "</section>", 1
         )[0]
@@ -523,7 +523,7 @@ def test_integration_guides_link_share_safe_export_recipe():
 
 def test_playwright_llm_guide_mentions_sync_snapshot_helper():
     project_root = Path(__file__).resolve().parents[1]
-    guide = (project_root / "docs" / "playwright-llm-debugging.html").read_text()
+    guide = (project_root / "docs" / "playwright-llm-debugging.html").read_text(encoding="utf-8")
 
     assert "run.snapshot_sync(page, action=...)" in guide
     assert (
@@ -535,7 +535,7 @@ def test_playwright_llm_guide_mentions_sync_snapshot_helper():
 
 def test_computer_use_guide_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    guide = (project_root / "docs" / "computer-use-agent-debugging.html").read_text()
+    guide = (project_root / "docs" / "computer-use-agent-debugging.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in guide
     assert (
@@ -550,7 +550,7 @@ def test_computer_use_guide_links_first_pr_recipe_for_small_contributions():
 
 def test_failure_walkthrough_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    guide = (project_root / "docs" / "debug-browser-agent-failure.html").read_text()
+    guide = (project_root / "docs" / "debug-browser-agent-failure.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in guide
     assert (
@@ -565,7 +565,7 @@ def test_failure_walkthrough_links_first_pr_recipe_for_small_contributions():
 
 def test_comparison_page_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "compare-browser-agent-debugging.html").read_text()
+    page = (project_root / "docs" / "compare-browser-agent-debugging.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in page
     assert (
@@ -580,7 +580,7 @@ def test_comparison_page_links_first_pr_recipe_for_small_contributions():
 
 def test_trace_demo_page_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "trace.html").read_text()
+    page = (project_root / "docs" / "trace.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in page
     assert (
@@ -595,7 +595,7 @@ def test_trace_demo_page_links_first_pr_recipe_for_small_contributions():
 
 def test_trace_demo_page_has_mobile_export_metadata():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "trace.html").read_text()
+    page = (project_root / "docs" / "trace.html").read_text(encoding="utf-8")
 
     assert "<html lang='en'>" in page
     assert "<meta name='viewport' content='width=device-width, initial-scale=1'>" in page
@@ -604,7 +604,7 @@ def test_trace_demo_page_has_mobile_export_metadata():
 
 def test_trace_demo_page_has_discovery_metadata():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "trace.html").read_text()
+    page = (project_root / "docs" / "trace.html").read_text(encoding="utf-8")
 
     assert "<link rel='canonical' href='https://aaronlab.github.io/browsertrace/trace.html'>" in page
     assert "<link rel='alternate' type='text/plain' title='llms.txt' href='./llms.txt'>" in page
@@ -682,7 +682,7 @@ def test_failure_patterns_page_guide_fragment_links_have_targets():
 
 def test_launch_kit_page_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "launch" / "index.html").read_text()
+    page = (project_root / "docs" / "launch" / "index.html").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in page
     assert (
@@ -697,7 +697,7 @@ def test_launch_kit_page_links_first_pr_recipe_for_small_contributions():
 
 def test_launch_kit_page_has_discovery_metadata():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "launch" / "index.html").read_text()
+    page = (project_root / "docs" / "launch" / "index.html").read_text(encoding="utf-8")
 
     assert (
         '<link rel="alternate" type="text/plain" title="llms.txt" href="../llms.txt">'
@@ -751,8 +751,8 @@ def test_docs_include_pypi_quickstart_after_publish():
     project_root = Path(__file__).resolve().parents[1]
     docs_text = "\n".join(
         [
-            (project_root / "README.md").read_text(),
-            (project_root / "docs" / "llms.txt").read_text(),
+            (project_root / "README.md").read_text(encoding="utf-8"),
+            (project_root / "docs" / "llms.txt").read_text(encoding="utf-8"),
         ]
     )
 
@@ -771,7 +771,7 @@ def test_owner_launch_checklists_include_pypi_trial_after_publish():
         "docs/launch/owner-next-actions.md",
         "docs/launch/owner-next-actions.zh-CN.md",
     ]:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         assert f'uvx --from "{pypi_spec}" browsertrace doctor' in text, relpath
         assert f'uvx --from "{pypi_spec}" browsertrace demo' in text, relpath
         assert "pypi" in text.lower(), relpath
@@ -779,7 +779,7 @@ def test_owner_launch_checklists_include_pypi_trial_after_publish():
 
 def test_pypi_publishing_notes_link_first_pr_recipe_for_small_docs_fixes():
     project_root = Path(__file__).resolve().parents[1]
-    notes = (project_root / "docs" / "release" / "pypi-publishing.md").read_text()
+    notes = (project_root / "docs" / "release" / "pypi-publishing.md").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in notes
     assert (
@@ -795,7 +795,7 @@ def test_pypi_publishing_notes_link_first_pr_recipe_for_small_docs_fixes():
 
 def test_changelog_links_first_pr_recipe_for_small_docs_fixes():
     project_root = Path(__file__).resolve().parents[1]
-    changelog = (project_root / "CHANGELOG.md").read_text()
+    changelog = (project_root / "CHANGELOG.md").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in changelog
     assert (
@@ -810,7 +810,7 @@ def test_changelog_links_first_pr_recipe_for_small_docs_fixes():
 
 def test_changelog_tracks_017_export_discovery_and_stagehand_updates():
     project_root = Path(__file__).resolve().parents[1]
-    changelog = (project_root / "CHANGELOG.md").read_text()
+    changelog = (project_root / "CHANGELOG.md").read_text(encoding="utf-8")
     release_notes = changelog.split("## 0.1.17", 1)[1].split("## 0.1.16", 1)[0]
 
     assert "stagehand_evidence" in release_notes
@@ -822,7 +822,7 @@ def test_changelog_tracks_017_export_discovery_and_stagehand_updates():
 
 def test_code_of_conduct_links_first_pr_recipe_for_small_docs_fixes():
     project_root = Path(__file__).resolve().parents[1]
-    code_of_conduct = (project_root / "CODE_OF_CONDUCT.md").read_text()
+    code_of_conduct = (project_root / "CODE_OF_CONDUCT.md").read_text(encoding="utf-8")
 
     assert "First PR Recipe" in code_of_conduct
     assert (
@@ -836,7 +836,7 @@ def test_code_of_conduct_links_first_pr_recipe_for_small_docs_fixes():
 
 def test_code_of_conduct_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
-    code_of_conduct = (project_root / "CODE_OF_CONDUCT.md").read_text()
+    code_of_conduct = (project_root / "CODE_OF_CONDUCT.md").read_text(encoding="utf-8")
 
     stack_guides = [
         "Browser Use guide: https://aaronlab.github.io/browsertrace/browser-use-debugging.html",
@@ -856,7 +856,7 @@ def test_github_profile_draft_links_current_trial_and_contribution_paths():
     pypi_spec = "browsertrace[ui]"
     profile_draft = (
         project_root / "docs" / "launch" / "github-profile-readme.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "https://github.com/aaronlab/browsertrace" in profile_draft
     assert "https://aaronlab.github.io/browsertrace/browser-use-debugging.html" in profile_draft
@@ -887,7 +887,7 @@ def test_github_profile_draft_includes_json_cli_troubleshooting_note():
     project_root = Path(__file__).resolve().parents[1]
     profile_draft = (
         project_root / "docs" / "launch" / "github-profile-readme.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## Troubleshooting" in profile_draft
     note = profile_draft.split("## Troubleshooting", 1)[1].split(
         "## Current Focus", 1
@@ -935,7 +935,7 @@ def test_show_hn_contribution_reply_points_to_current_good_first_queue():
     project_root = Path(__file__).resolve().parents[1]
     packet = (
         project_root / "docs" / "launch" / "day-2-show-hn-packet.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     reply = packet.split("Can I contribute a small fix?", 1)[1].split(
         "## Troubleshooting Reply", 1
     )[0]
@@ -951,7 +951,7 @@ def test_show_hn_contribution_reply_points_to_current_good_first_queue():
 
 def test_readme_has_public_safe_export_sharing_example():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "## Share A Public-Safe Trace" in readme
     assert "browsertrace demo" in readme
@@ -963,7 +963,7 @@ def test_readme_has_public_safe_export_sharing_example():
 
 def test_readme_has_browser_agent_feedback_checklist():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "## Report A Browser-Agent Failure" in readme
     assert "Browser Use, Stagehand, Skyvern, Playwright + LLM, or custom computer-use" in readme
@@ -977,7 +977,7 @@ def test_readme_has_browser_agent_feedback_checklist():
 
 def test_readme_links_launch_discussion_near_feedback():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     feedback_section = readme.split("## Report A Browser-Agent Failure", 1)[1].split(
         "## Why not just use ___?", 1
     )[0]
@@ -992,7 +992,7 @@ def test_readme_links_launch_discussion_near_feedback():
 
 def test_readme_links_private_reports_near_feedback():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     feedback_section = readme.split("## Report A Browser-Agent Failure", 1)[1].split(
         "## Why not just use ___?", 1
     )[0]
@@ -1027,7 +1027,7 @@ def test_readme_includes_aos_mapping_research_note_near_feedback():
 
 def test_support_page_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
-    support = (project_root / "SUPPORT.md").read_text()
+    support = (project_root / "SUPPORT.md").read_text(encoding="utf-8")
 
     stack_guides = [
         "Browser Use guide: https://aaronlab.github.io/browsertrace/browser-use-debugging.html",
@@ -1068,7 +1068,7 @@ def test_support_page_includes_aos_mapping_research_note():
 
 def test_readme_clarifies_cloud_features_are_not_required_for_local_oss():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     cloud_section = readme.split("## Cloud / Team (coming soon)", 1)[1].split(
         "## Roadmap", 1
     )[0]
@@ -1085,7 +1085,7 @@ def test_readme_clarifies_cloud_features_are_not_required_for_local_oss():
 
 def test_roadmap_contribution_guidelines_link_first_pr_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    roadmap = (project_root / "ROADMAP.md").read_text()
+    roadmap = (project_root / "ROADMAP.md").read_text(encoding="utf-8")
     guidelines = roadmap.split("## Contribution Guidelines", 1)[1].split(
         "## Success Signals", 1
     )[0]
@@ -1099,7 +1099,7 @@ def test_roadmap_contribution_guidelines_link_first_pr_recipe():
 
 def test_roadmap_links_stack_debugging_guides_for_contributors():
     project_root = Path(__file__).resolve().parents[1]
-    roadmap = (project_root / "ROADMAP.md").read_text()
+    roadmap = (project_root / "ROADMAP.md").read_text(encoding="utf-8")
     guidelines = roadmap.split("## Contribution Guidelines", 1)[1].split(
         "## Success Signals", 1
     )[0]
@@ -1121,7 +1121,7 @@ def test_roadmap_links_stack_debugging_guides_for_contributors():
 
 def test_roadmap_records_current_launch_state():
     project_root = Path(__file__).resolve().parents[1]
-    roadmap = (project_root / "ROADMAP.md").read_text()
+    roadmap = (project_root / "ROADMAP.md").read_text(encoding="utf-8")
 
     assert "`v0.1.17` is the current launch release." in roadmap
     assert 'pip install "browsertrace[ui]"' in roadmap
@@ -1134,7 +1134,7 @@ def test_roadmap_records_current_launch_state():
 
 def test_readme_links_contributor_guide_near_contributing():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     contributing_section = readme.split("## Contributing", 1)[1].split(
         "## License", 1
     )[0]
@@ -1152,7 +1152,7 @@ def test_readme_links_contributor_guide_near_contributing():
 
 def test_readme_contributing_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     contributing_section = readme.split("## Contributing", 1)[1].split(
         "## License", 1
     )[0]
@@ -1164,7 +1164,7 @@ def test_readme_contributing_links_security_policy_for_sensitive_reports():
 
 def test_contributing_includes_json_cli_troubleshooting_checks():
     project_root = Path(__file__).resolve().parents[1]
-    contributing = (project_root / "CONTRIBUTING.md").read_text()
+    contributing = (project_root / "CONTRIBUTING.md").read_text(encoding="utf-8")
     local_checks = contributing.split("## Useful Local Checks", 1)[1].split(
         "## Contribution Areas", 1
     )[0]
@@ -1182,7 +1182,7 @@ browsertrace show <run_id> --json
 
 def test_contributing_links_stack_guides_for_adapter_context():
     project_root = Path(__file__).resolve().parents[1]
-    contributing = (project_root / "CONTRIBUTING.md").read_text()
+    contributing = (project_root / "CONTRIBUTING.md").read_text(encoding="utf-8")
     contribution_areas = contributing.split("## Contribution Areas", 1)[1].split(
         "## Adapter Contribution Checklist", 1
     )[0]
@@ -1205,7 +1205,7 @@ def test_contributing_links_stack_guides_for_adapter_context():
 
 def test_contributing_includes_first_pr_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    contributing = (project_root / "CONTRIBUTING.md").read_text()
+    contributing = (project_root / "CONTRIBUTING.md").read_text(encoding="utf-8")
     assert "## First PR Recipe" in contributing
     recipe = contributing.split("## First PR Recipe", 1)[1].split(
         "## Useful Local Checks", 1
@@ -1226,7 +1226,7 @@ def test_contributing_includes_first_pr_recipe():
 
 def test_contributing_sets_good_first_issue_claim_window():
     project_root = Path(__file__).resolve().parents[1]
-    contributing = (project_root / "CONTRIBUTING.md").read_text()
+    contributing = (project_root / "CONTRIBUTING.md").read_text(encoding="utf-8")
     recipe = contributing.split("## First PR Recipe", 1)[1].split(
         "## Useful Local Checks", 1
     )[0]
@@ -1238,7 +1238,7 @@ def test_contributing_sets_good_first_issue_claim_window():
 
 def test_first_pr_recipe_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    contributing = (project_root / "CONTRIBUTING.md").read_text()
+    contributing = (project_root / "CONTRIBUTING.md").read_text(encoding="utf-8")
     recipe = contributing.split("## First PR Recipe", 1)[1].split(
         "## Useful Local Checks", 1
     )[0]
@@ -1250,7 +1250,7 @@ def test_first_pr_recipe_links_security_policy_for_sensitive_reports():
 
 def test_readme_links_code_of_conduct_near_contributing():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     contributing_section = readme.split("## Contributing", 1)[1].split(
         "## License", 1
     )[0]
@@ -1264,7 +1264,7 @@ def test_readme_links_code_of_conduct_near_contributing():
 
 def test_readme_links_issue_template_chooser_near_contributing():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     contributing_section = readme.split("## Contributing", 1)[1].split(
         "## License", 1
     )[0]
@@ -1280,7 +1280,7 @@ def test_readme_links_issue_template_chooser_near_contributing():
 
 def test_readme_links_pull_request_template_near_contributing():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     contributing_section = readme.split("## Contributing", 1)[1].split(
         "## License", 1
     )[0]
@@ -1296,7 +1296,7 @@ def test_readme_links_pull_request_template_near_contributing():
 
 def test_readme_links_release_notes_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1313,7 +1313,7 @@ def test_readme_links_release_notes_near_install_tag():
 
 def test_readme_explains_release_notes_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1331,7 +1331,7 @@ def test_readme_explains_release_notes_near_install_checks():
 
 def test_readme_links_pypi_package_near_install():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1345,7 +1345,7 @@ def test_readme_links_pypi_package_near_install():
 
 def test_readme_explains_pypi_package_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1360,7 +1360,7 @@ def test_readme_explains_pypi_package_near_install_checks():
 
 def test_readme_explains_uvx_trial_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1376,7 +1376,7 @@ def test_readme_explains_uvx_trial_near_install_checks():
 
 def test_readme_explains_ui_extra_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1392,7 +1392,7 @@ def test_readme_explains_ui_extra_near_install_checks():
 
 def test_readme_explains_sdk_only_terminal_commands_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1409,7 +1409,7 @@ def test_readme_explains_sdk_only_terminal_commands_near_install_checks():
 
 def test_readme_mentions_python_version_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1422,7 +1422,7 @@ def test_readme_mentions_python_version_near_install_tag():
 
 def test_readme_explains_python_version_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1438,7 +1438,7 @@ def test_readme_explains_python_version_near_install_checks():
 
 def test_readme_links_first_run_troubleshooting_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1451,7 +1451,7 @@ def test_readme_links_first_run_troubleshooting_near_install_tag():
 
 def test_readme_explains_first_run_troubleshooting_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1472,7 +1472,7 @@ def test_readme_explains_first_run_troubleshooting_near_install_tag():
 
 def test_readme_links_static_demo_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1492,7 +1492,7 @@ def test_readme_links_static_demo_near_install_tag():
 
 def test_readme_links_command_cheat_sheet_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1513,7 +1513,7 @@ def test_readme_links_command_cheat_sheet_near_install_tag():
 
 def test_readme_explains_doctor_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1526,7 +1526,7 @@ def test_readme_explains_doctor_near_install_tag():
 
 def test_readme_links_healthy_doctor_output_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1541,7 +1541,7 @@ def test_readme_links_healthy_doctor_output_near_install_tag():
 
 def test_readme_explains_list_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1554,7 +1554,7 @@ def test_readme_explains_list_near_install_tag():
 
 def test_readme_explains_list_output_fields_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1569,7 +1569,7 @@ def test_readme_explains_list_output_fields_near_install_checks():
 
 def test_readme_explains_list_json_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1583,7 +1583,7 @@ def test_readme_explains_list_json_near_install_checks():
 
 def test_readme_explains_list_status_filter_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1597,7 +1597,7 @@ def test_readme_explains_list_status_filter_near_install_checks():
 
 def test_readme_includes_json_cli_automation_recipe_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1614,7 +1614,7 @@ browsertrace show <run_id> --json
 
 def test_readme_links_llms_troubleshooting_context_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1628,7 +1628,7 @@ def test_readme_links_llms_troubleshooting_context_near_install_checks():
 
 def test_readme_explains_demo_run_id_output_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1644,7 +1644,7 @@ def test_readme_explains_demo_run_id_output_near_install_checks():
 
 def test_readme_explains_demo_needs_no_api_keys_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1656,7 +1656,7 @@ def test_readme_explains_demo_needs_no_api_keys_near_install_tag():
 
 def test_readme_explains_no_api_demo_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1672,7 +1672,7 @@ def test_readme_explains_no_api_demo_near_install_checks():
 
 def test_readme_explains_no_signup_trial_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1688,7 +1688,7 @@ def test_readme_explains_no_signup_trial_near_install_checks():
 
 def test_readme_links_first_run_feedback_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1701,7 +1701,7 @@ def test_readme_links_first_run_feedback_near_install_tag():
 
 def test_readme_links_launch_discussion_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1714,7 +1714,7 @@ def test_readme_links_launch_discussion_near_install_tag():
 
 def test_readme_links_example_matrix_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1727,7 +1727,7 @@ def test_readme_links_example_matrix_near_install_tag():
 
 def test_readme_explains_no_service_examples_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1740,7 +1740,7 @@ def test_readme_explains_no_service_examples_near_install_checks():
 
 def test_readme_links_recent_runs_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1754,7 +1754,7 @@ def test_readme_links_recent_runs_near_install_tag():
 
 def test_readme_links_run_id_prefix_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1768,7 +1768,7 @@ def test_readme_links_run_id_prefix_near_install_tag():
 
 def test_readme_explains_show_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1782,7 +1782,7 @@ def test_readme_explains_show_near_install_tag():
 
 def test_readme_explains_show_json_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1796,7 +1796,7 @@ def test_readme_explains_show_json_near_install_tag():
 
 def test_readme_explains_public_safe_export_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1812,7 +1812,7 @@ def test_readme_explains_public_safe_export_near_install_tag():
 
 def test_readme_explains_public_safe_export_privacy_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1825,7 +1825,7 @@ def test_readme_explains_public_safe_export_privacy_near_install_checks():
 
 def test_readme_explains_redact_export_distinction_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1841,7 +1841,7 @@ def test_readme_explains_redact_export_distinction_near_install_checks():
 
 def test_readme_explains_self_contained_export_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1857,7 +1857,7 @@ def test_readme_explains_self_contained_export_near_install_checks():
 
 def test_readme_explains_export_output_path_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1873,7 +1873,7 @@ def test_readme_explains_export_output_path_near_install_checks():
 
 def test_readme_explains_export_success_output_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1888,7 +1888,7 @@ def test_readme_explains_export_success_output_near_install_checks():
 
 def test_readme_explains_port_override_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1904,7 +1904,7 @@ def test_readme_explains_port_override_near_install_tag():
 
 def test_readme_explains_localhost_ui_binding_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1920,7 +1920,7 @@ def test_readme_explains_localhost_ui_binding_near_install_checks():
 
 def test_readme_explains_local_ui_url_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1940,7 +1940,7 @@ def test_readme_explains_local_ui_url_near_install_checks():
 
 def test_readme_explains_demo_run_title_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1956,7 +1956,7 @@ def test_readme_explains_demo_run_title_near_install_checks():
 
 def test_readme_explains_isolated_trace_storage_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1975,7 +1975,7 @@ def test_readme_explains_isolated_trace_storage_near_install_tag():
 
 def test_readme_explains_windows_trace_home_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -1991,7 +1991,7 @@ def test_readme_explains_windows_trace_home_near_install_checks():
 
 def test_readme_explains_cli_help_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -2003,7 +2003,7 @@ def test_readme_explains_cli_help_near_install_tag():
 
 def test_readme_explains_export_help_near_install_tag():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -2018,7 +2018,7 @@ def test_readme_explains_export_help_near_install_tag():
 
 def test_readme_groups_install_tips_as_compact_list():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -2079,7 +2079,7 @@ def test_readme_groups_install_tips_as_compact_list():
 
 def test_readme_links_browser_use_debugging_guide():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "https://aaronlab.github.io/browsertrace/browser-use-debugging.html" in readme
     assert "Browser Use callback compatibility" in readme
@@ -2092,7 +2092,7 @@ def test_readme_links_browser_use_debugging_guide():
 
 def test_readme_links_stagehand_debugging_guide():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "https://aaronlab.github.io/browsertrace/stagehand-debugging.html" in readme
     assert "Stagehand `act` and `extract` debugging" in readme
@@ -2102,7 +2102,7 @@ def test_readme_links_stagehand_debugging_guide():
 
 def test_readme_links_skyvern_debugging_guide():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "https://aaronlab.github.io/browsertrace/skyvern-debugging.html" in readme
     assert "Skyvern task and workflow debugging" in readme
@@ -2112,7 +2112,7 @@ def test_readme_links_skyvern_debugging_guide():
 
 def test_readme_links_playwright_llm_debugging_guide():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "https://aaronlab.github.io/browsertrace/playwright-llm-debugging.html" in readme
     assert "prompt, DOM, selector, retry, and error fields" in readme
@@ -2122,7 +2122,7 @@ def test_readme_links_playwright_llm_debugging_guide():
 
 def test_readme_links_integrations_overview():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "https://aaronlab.github.io/browsertrace/integrations.html" in readme
     assert "Browser Use, Stagehand, Skyvern, and Playwright guide paths" in readme
@@ -2132,7 +2132,7 @@ def test_readme_links_integrations_overview():
 
 def test_readme_try_it_row_links_direct_integration_guides():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     match = re.search(
         r"\*\*Try it:\*\* (?P<links>.*?)\n\nFor AI/coding agents",
@@ -2170,7 +2170,7 @@ def test_readme_try_it_row_links_direct_integration_guides():
 
 def test_readme_links_adapter_request_near_integrations():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert (
         "https://github.com/aaronlab/browsertrace/issues/new?template=integration_request.yml"
@@ -2183,7 +2183,7 @@ def test_readme_links_adapter_request_near_integrations():
 
 def test_readme_links_comparison_guide_with_named_text():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert (
         "[browser-agent debugging comparison](https://aaronlab.github.io/browsertrace/compare-browser-agent-debugging.html)"
@@ -2197,7 +2197,7 @@ def test_readme_links_comparison_guide_with_named_text():
 
 def test_readme_links_llms_txt_for_ai_coding_agents():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "[`llms.txt`](llms.txt)" in readme
     assert "[`docs/llms.txt`](docs/llms.txt)" in readme
@@ -2209,7 +2209,7 @@ def test_readme_links_llms_txt_for_ai_coding_agents():
 
 def test_readme_links_examples_command_cheat_sheet():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#browsertrace-command-cheat-sheet" in readme
     assert "command cheat sheet" in readme
@@ -2224,7 +2224,7 @@ def test_readme_links_examples_command_cheat_sheet():
 
 def test_readme_links_example_matrix():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#example-matrix" in readme
     assert "no-service examples" in readme
@@ -2236,7 +2236,7 @@ def test_readme_links_example_matrix():
 
 def test_readme_links_first_run_troubleshooting_checklist():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#first-run-troubleshooting-checklist" in readme
     assert "first-run troubleshooting checklist" in readme
@@ -2251,7 +2251,7 @@ def test_readme_links_first_run_troubleshooting_checklist():
 
 def test_readme_links_doctor_output_example():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#check-a-healthy-local-install" in readme
     assert "healthy `browsertrace doctor` output" in readme
@@ -2265,7 +2265,7 @@ def test_readme_links_doctor_output_example():
 
 def test_readme_links_public_safe_attachment_note():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#attach-a-public-safe-export-to-an-issue" in readme
     assert "public-safe export" in readme
@@ -2277,7 +2277,7 @@ def test_readme_links_public_safe_attachment_note():
 
 def test_readme_links_share_safe_export_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#creating-a-share-safe-export" in readme
     assert "browsertrace export <run_id> --public -o public.html" in readme
@@ -2288,7 +2288,7 @@ def test_readme_links_share_safe_export_recipe():
 
 def test_readme_links_github_actions_public_export_artifact_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#github-actions-artifact-for-public-safe-exports" in readme
     assert "GitHub Actions artifact" in readme
@@ -2300,7 +2300,7 @@ def test_readme_links_github_actions_public_export_artifact_recipe():
 
 def test_readme_links_gitlab_ci_public_export_artifact_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#gitlab-ci-artifact-for-public-safe-exports" in readme
     assert "GitLab CI artifact" in readme
@@ -2312,7 +2312,7 @@ def test_readme_links_gitlab_ci_public_export_artifact_recipe():
 
 def test_readme_links_isolated_trace_storage_testing_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#testing-with-isolated-trace-storage" in readme
     assert "isolated trace storage" in readme
@@ -2326,7 +2326,7 @@ def test_readme_links_isolated_trace_storage_testing_recipe():
 
 def test_readme_links_trace_storage_location_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#where-traces-are-stored" in readme
     assert "~/.browsertrace/" in readme
@@ -2338,7 +2338,7 @@ def test_readme_links_trace_storage_location_recipe():
 
 def test_readme_links_playwright_sync_snapshot_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#playwright-sync-api-snapshot" in readme
     assert "snapshot_sync" in readme
@@ -2349,7 +2349,7 @@ def test_readme_links_playwright_sync_snapshot_recipe():
 
 def test_readme_links_environment_variable_quick_reference():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#environment-variable-quick-reference" in readme
     assert "environment variable quick reference" in readme
@@ -2361,7 +2361,7 @@ def test_readme_links_environment_variable_quick_reference():
 
 def test_readme_links_cli_help_discovery_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#discover-cli-options" in readme
     assert "CLI help" in readme
@@ -2373,7 +2373,7 @@ def test_readme_links_cli_help_discovery_recipe():
 
 def test_readme_links_run_id_prefix_troubleshooting_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#run-id-prefixes-for-export" in readme
     assert "run ID prefix" in readme
@@ -2385,7 +2385,7 @@ def test_readme_links_run_id_prefix_troubleshooting_recipe():
 
 def test_readme_links_failed_run_terminal_inspection_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#inspect-a-failed-run-in-the-terminal" in readme
     assert "failed step timeline" in readme
@@ -2396,7 +2396,7 @@ def test_readme_links_failed_run_terminal_inspection_recipe():
 
 def test_readme_links_recent_runs_list_limit_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#show-only-recent-runs" in readme
     assert "recent runs" in readme
@@ -2408,7 +2408,7 @@ def test_readme_links_recent_runs_list_limit_recipe():
 
 def test_readme_links_demo_run_lookup_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#finding-your-demo-run" in readme
     assert "browsertrace list" in readme
@@ -2421,7 +2421,7 @@ def test_readme_links_demo_run_lookup_recipe():
 
 def test_readme_links_port_already_in_use_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
 
     assert "examples/#port-already-in-use" in readme
     assert "port already in use" in readme
@@ -2433,7 +2433,7 @@ def test_readme_links_port_already_in_use_recipe():
 
 def test_examples_readme_includes_windows_public_safe_export_flow():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "## Public Export Flow" in examples_readme
     assert (
@@ -2449,7 +2449,7 @@ def test_examples_readme_includes_windows_public_safe_export_flow():
 
 def test_examples_readme_includes_export_run_id_prefix_troubleshooting():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Run ID Prefixes For Export" in examples_readme
     assert "browsertrace list" in examples_readme
@@ -2461,7 +2461,7 @@ def test_examples_readme_includes_export_run_id_prefix_troubleshooting():
 
 def test_examples_readme_includes_browsertrace_show_failed_run_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Inspect a failed run in the terminal" in examples_readme
     assert "browsertrace show <run_id>" in examples_readme
@@ -2472,7 +2472,7 @@ def test_examples_readme_includes_browsertrace_show_failed_run_recipe():
 
 def test_examples_readme_includes_list_limit_recent_runs_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Show only recent runs" in examples_readme
     assert "browsertrace list --limit 5" in examples_readme
@@ -2484,7 +2484,7 @@ def test_examples_readme_includes_list_limit_recent_runs_recipe():
 
 def test_examples_readme_includes_doctor_output_example():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Check a healthy local install" in examples_readme
     assert "browsertrace doctor" in examples_readme
@@ -2499,7 +2499,7 @@ def test_examples_readme_includes_doctor_output_example():
 
 def test_examples_readme_includes_cli_help_discovery_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Discover CLI options" in examples_readme
     assert "browsertrace --help" in examples_readme
@@ -2511,7 +2511,7 @@ def test_examples_readme_includes_cli_help_discovery_recipe():
 
 def test_examples_readme_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
     stack_guides = [
         "Browser Use guide: https://aaronlab.github.io/browsertrace/browser-use-debugging.html",
         "Stagehand guide: https://aaronlab.github.io/browsertrace/stagehand-debugging.html",
@@ -2530,7 +2530,7 @@ def test_examples_readme_links_stack_debugging_guides():
 
 def test_examples_readme_includes_environment_variable_quick_reference():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Environment variable quick reference" in examples_readme
     assert "`BROWSERTRACE_HOME`" in examples_readme
@@ -2543,7 +2543,7 @@ def test_examples_readme_includes_environment_variable_quick_reference():
 
 def test_examples_readme_includes_public_safe_attachment_note():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Attach a public-safe export to an issue" in examples_readme
     assert "public.html" in examples_readme
@@ -2556,7 +2556,7 @@ def test_examples_readme_includes_public_safe_attachment_note():
 
 def test_examples_readme_includes_first_run_troubleshooting_checklist():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### First-run troubleshooting checklist" in examples_readme
     assert "browsertrace doctor" in examples_readme
@@ -2570,7 +2570,7 @@ def test_examples_readme_includes_first_run_troubleshooting_checklist():
 
 def test_examples_readme_includes_json_cli_checks_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
     troubleshooting_section = examples_readme.split("## Troubleshooting", 1)[1].split(
         "### Environment variable quick reference", 1
     )[0]
@@ -2589,7 +2589,7 @@ browsertrace show <run_id> --json
 
 def test_examples_readme_links_llms_troubleshooting_context():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
     troubleshooting_section = examples_readme.split("## Troubleshooting", 1)[1].split(
         "### Environment variable quick reference", 1
     )[0]
@@ -2603,7 +2603,7 @@ def test_examples_readme_links_llms_troubleshooting_context():
 
 def test_examples_readme_includes_command_cheat_sheet():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### BrowserTrace command cheat sheet" in examples_readme
     assert "| Command | Use when |" in examples_readme
@@ -2618,7 +2618,7 @@ def test_examples_readme_includes_command_cheat_sheet():
 
 def test_examples_readme_includes_pytest_isolated_storage_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Testing with isolated trace storage" in examples_readme
     assert "def test_browsertrace_trace_uses_temp_store" in examples_readme
@@ -2629,7 +2629,7 @@ def test_examples_readme_includes_pytest_isolated_storage_recipe():
 
 def test_examples_readme_includes_github_actions_public_export_artifact_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### GitHub Actions artifact for public-safe exports" in examples_readme
     assert "actions/upload-artifact@v4" in examples_readme
@@ -2647,7 +2647,7 @@ def test_examples_readme_includes_github_actions_public_export_artifact_recipe()
 
 def test_examples_readme_includes_gitlab_ci_public_export_artifact_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### GitLab CI artifact for public-safe exports" in examples_readme
     assert "browsertrace-public-export:" in examples_readme
@@ -2663,7 +2663,7 @@ def test_examples_readme_includes_gitlab_ci_public_export_artifact_recipe():
 
 def test_examples_readme_includes_playwright_sync_snapshot_recipe():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
 
     assert "### Playwright sync API snapshot" in examples_readme
     assert "from playwright.sync_api import sync_playwright" in examples_readme
@@ -2673,7 +2673,7 @@ def test_examples_readme_includes_playwright_sync_snapshot_recipe():
 
 def test_examples_readme_links_browser_use_run_hooks_guide():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
     example_matrix = examples_readme.split("## Example Matrix", 1)[1].split(
         "For Playwright examples", 1
     )[0]
@@ -2691,7 +2691,7 @@ def test_examples_readme_links_browser_use_run_hooks_guide():
 
 def test_examples_readme_links_stagehand_and_skyvern_guides_near_matrix():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
     example_matrix = examples_readme.split("## Example Matrix", 1)[1].split(
         "For Playwright examples", 1
     )[0]
@@ -2716,7 +2716,7 @@ def test_examples_readme_links_stagehand_and_skyvern_guides_near_matrix():
 
 def test_examples_readme_links_playwright_llm_and_computer_use_guides_near_matrix():
     project_root = Path(__file__).resolve().parents[1]
-    examples_readme = (project_root / "examples" / "README.md").read_text()
+    examples_readme = (project_root / "examples" / "README.md").read_text(encoding="utf-8")
     example_matrix = examples_readme.split("## Example Matrix", 1)[1].split(
         "For Playwright examples", 1
     )[0]
@@ -2748,7 +2748,7 @@ def test_owner_profile_actions_mark_browsertrace_pin_complete():
     }
 
     for relpath, phrase in owner_docs.items():
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         assert phrase in text, relpath
         assert "aaronlab/browsertrace" in text, relpath
         assert "https://github.com/aaronlab/browsertrace/issues/24" not in text, relpath
@@ -2758,8 +2758,8 @@ def test_first_run_docs_include_doctor_command():
     project_root = Path(__file__).resolve().parents[1]
     docs_text = "\n".join(
         [
-            (project_root / "README.md").read_text(),
-            (project_root / "docs" / "llms.txt").read_text(),
+            (project_root / "README.md").read_text(encoding="utf-8"),
+            (project_root / "docs" / "llms.txt").read_text(encoding="utf-8"),
         ]
     )
 
@@ -2769,7 +2769,7 @@ def test_first_run_docs_include_doctor_command():
 
 def test_readme_explains_doctor_json_near_install_checks():
     project_root = Path(__file__).resolve().parents[1]
-    readme = (project_root / "README.md").read_text()
+    readme = (project_root / "README.md").read_text(encoding="utf-8")
     install_section = readme.split("## Install From PyPI", 1)[1].split(
         "For a walkthrough", 1
     )[0]
@@ -2783,7 +2783,7 @@ def test_readme_explains_doctor_json_near_install_checks():
 
 def test_llms_txt_points_to_current_contribution_path():
     project_root = Path(__file__).resolve().parents[1]
-    llms = (project_root / "docs" / "llms.txt").read_text()
+    llms = (project_root / "docs" / "llms.txt").read_text(encoding="utf-8")
 
     assert "Good first issue: https://github.com/aaronlab/browsertrace/labels/good%20first%20issue" in llms
     assert "https://github.com/aaronlab/browsertrace/issues/213" not in llms
@@ -2802,14 +2802,14 @@ def test_llms_txt_points_to_current_contribution_path():
 def test_root_llms_txt_matches_hosted_llms_txt():
     project_root = Path(__file__).resolve().parents[1]
 
-    assert (project_root / "llms.txt").read_text() == (
+    assert (project_root / "llms.txt").read_text(encoding="utf-8") == (
         project_root / "docs" / "llms.txt"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
 
 def test_llms_txt_includes_troubleshooting_prompt_snippet():
     project_root = Path(__file__).resolve().parents[1]
-    llms = (project_root / "docs" / "llms.txt").read_text()
+    llms = (project_root / "docs" / "llms.txt").read_text(encoding="utf-8")
 
     assert "## Troubleshooting Prompt" in llms
     assert "browsertrace doctor" in llms
@@ -2825,7 +2825,7 @@ def test_llms_txt_includes_troubleshooting_prompt_snippet():
 
 def test_llms_txt_includes_browser_use_icon_only_failure_shape():
     project_root = Path(__file__).resolve().parents[1]
-    llms = (project_root / "docs" / "llms.txt").read_text()
+    llms = (project_root / "docs" / "llms.txt").read_text(encoding="utf-8")
 
     assert "## Known Failure Shapes" in llms
     assert (
@@ -2966,7 +2966,7 @@ def test_llms_txt_includes_computer_use_persistent_browser_recovery_shape():
 
 def test_llms_txt_includes_json_cli_troubleshooting_snippet():
     project_root = Path(__file__).resolve().parents[1]
-    llms = (project_root / "docs" / "llms.txt").read_text()
+    llms = (project_root / "docs" / "llms.txt").read_text(encoding="utf-8")
     troubleshooting_prompt = llms.split("## Troubleshooting Prompt", 1)[1].split(
         "## Positioning", 1
     )[0]
@@ -3030,7 +3030,7 @@ def test_llms_txt_includes_aos_mapping_research_note():
 
 def test_press_kit_includes_current_trial_and_contribution_paths():
     project_root = Path(__file__).resolve().parents[1]
-    press_kit = (project_root / "docs" / "launch" / "press-kit.md").read_text()
+    press_kit = (project_root / "docs" / "launch" / "press-kit.md").read_text(encoding="utf-8")
     pypi_spec = (
         "browsertrace[ui]"
     )
@@ -3051,7 +3051,7 @@ def test_press_kit_includes_current_trial_and_contribution_paths():
 
 def test_press_kit_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
-    press_kit = (project_root / "docs" / "launch" / "press-kit.md").read_text()
+    press_kit = (project_root / "docs" / "launch" / "press-kit.md").read_text(encoding="utf-8")
     guide_section = press_kit.split("## Stack-Specific Guides", 1)[1].split(
         "## Short Description", 1
     )[0]
@@ -3095,7 +3095,7 @@ def test_press_kit_includes_aos_mapping_research_note():
 
 def test_press_kit_includes_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
-    press_kit = (project_root / "docs" / "launch" / "press-kit.md").read_text()
+    press_kit = (project_root / "docs" / "launch" / "press-kit.md").read_text(encoding="utf-8")
     assert "## Troubleshooting Reply" in press_kit
     reply = press_kit.split("## Troubleshooting Reply", 1)[1].split(
         "## Safe Ask", 1
@@ -3129,7 +3129,7 @@ def test_core_guides_advertise_llms_txt():
         "playwright-llm-debugging.html",
         "computer-use-agent-debugging.html",
     ]:
-        page = (project_root / "docs" / filename).read_text()
+        page = (project_root / "docs" / filename).read_text(encoding="utf-8")
         assert (
             '<link rel="alternate" type="text/plain" title="llms.txt" href="./llms.txt">'
             in page
@@ -3138,7 +3138,7 @@ def test_core_guides_advertise_llms_txt():
 
 def test_browser_use_guide_has_troubleshooting_section():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "browser-use-debugging.html").read_text()
+    page = (project_root / "docs" / "browser-use-debugging.html").read_text(encoding="utf-8")
 
     assert "Troubleshooting Browser Use traces" in page
     assert "Could not attach to this Agent" in page
@@ -3149,7 +3149,7 @@ def test_browser_use_guide_has_troubleshooting_section():
 
 def test_browser_use_guide_documents_callback_compatibility():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "browser-use-debugging.html").read_text()
+    page = (project_root / "docs" / "browser-use-debugging.html").read_text(encoding="utf-8")
 
     assert "Callback compatibility" in page
     assert "on_step_start" in page
@@ -3162,7 +3162,7 @@ def test_browser_use_guide_documents_callback_compatibility():
 
 def test_browser_use_guide_documents_icon_only_click_targets():
     project_root = Path(__file__).resolve().parents[1]
-    page = (project_root / "docs" / "browser-use-debugging.html").read_text()
+    page = (project_root / "docs" / "browser-use-debugging.html").read_text(encoding="utf-8")
 
     assert "Debug icon-only click targets" in page
     assert "visible-target versus accessible-target mismatch" in page
@@ -3286,7 +3286,7 @@ def test_computer_use_guide_documents_persistent_browser_recovery():
 
 def test_sitemap_exposes_llms_txt_and_core_discovery_pages():
     project_root = Path(__file__).resolve().parents[1]
-    sitemap = (project_root / "docs" / "sitemap.xml").read_text()
+    sitemap = (project_root / "docs" / "sitemap.xml").read_text(encoding="utf-8")
 
     for path in [
         "",
@@ -3322,7 +3322,7 @@ def test_public_html_pages_have_open_graph_urls():
     }
 
     for relpath, url in public_pages.items():
-        page = (project_root / relpath).read_text()
+        page = (project_root / relpath).read_text(encoding="utf-8")
         assert re.search(
             rf"<meta property=['\"]og:url['\"] content=['\"]{re.escape(url)}['\"]>",
             page,
@@ -3331,7 +3331,7 @@ def test_public_html_pages_have_open_graph_urls():
 
 def test_sitemap_lastmod_matches_current_launch_refresh():
     project_root = Path(__file__).resolve().parents[1]
-    sitemap = (project_root / "docs" / "sitemap.xml").read_text()
+    sitemap = (project_root / "docs" / "sitemap.xml").read_text(encoding="utf-8")
 
     assert "<lastmod>2026-05-11</lastmod>" in sitemap
     assert "<lastmod>2026-05-09</lastmod>" not in sitemap
@@ -3346,7 +3346,7 @@ def test_launch_copy_includes_pypi_trial_after_publish():
         "docs/launch/day-1-publish-packet.md",
         "docs/launch/day-2-show-hn-packet.md",
     ]:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         assert f'uvx --from "{pypi_spec}" browsertrace doctor' in text, relpath
         assert f'uvx --from "{pypi_spec}" browsertrace demo' in text, relpath
         assert "pypi" in text.lower(), relpath
@@ -3391,7 +3391,7 @@ def test_secondary_launch_materials_surface_failure_patterns_page():
 
 def test_x_launch_copy_fits_non_premium_post_limit():
     project_root = Path(__file__).resolve().parents[1]
-    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text()
+    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text(encoding="utf-8")
 
     def text_blocks_between(start_heading: str, end_heading: str) -> list[str]:
         section = copy.split(start_heading, 1)[1].split(end_heading, 1)[0]
@@ -3415,7 +3415,7 @@ def test_product_hunt_launch_share_copy_fits_non_premium_post_limit():
     ]
 
     for path in docs:
-        copy = path.read_text()
+        copy = path.read_text(encoding="utf-8")
         section = copy.split("Launch share post:", 1)[-1]
         section = section.split("## Reddit", 1)[0].split("## Reply Notes", 1)[0]
         blocks = re.findall(r"```text\n(.*?)\n```", section, re.S)
@@ -3435,7 +3435,7 @@ def test_longform_launch_posts_include_pypi_trial_after_publish():
         "docs/launch/chinese-tutorial-post.md",
         "docs/launch/response-templates.md",
     ]:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         assert f'uvx --from "{pypi_spec}" browsertrace doctor' in text, relpath
         assert f'uvx --from "{pypi_spec}" browsertrace demo' in text, relpath
         assert "pypi" in text.lower(), relpath
@@ -3445,7 +3445,7 @@ def test_response_templates_include_json_cli_diagnostics_reply():
     project_root = Path(__file__).resolve().parents[1]
     templates = (
         project_root / "docs" / "launch" / "response-templates.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     recipe = """```bash
 browsertrace doctor --json
 browsertrace list --status failed --json
@@ -3464,7 +3464,7 @@ def test_response_templates_include_stagehand_custom_tool_replay_reply():
     project_root = Path(__file__).resolve().parents[1]
     templates = (
         project_root / "docs" / "launch" / "response-templates.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "## Stagehand custom tools are skipped during replay" in templates
     reply = templates.split(
@@ -3485,7 +3485,7 @@ def test_response_templates_link_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
     templates = (
         project_root / "docs" / "launch" / "response-templates.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "## Stack-Specific Reply Links" in templates
     guide_section = templates.split("## Stack-Specific Reply Links", 1)[1].split(
@@ -3534,7 +3534,7 @@ def test_response_templates_include_skyvern_vnc_cdp_debug_reply():
     project_root = Path(__file__).resolve().parents[1]
     templates = (
         project_root / "docs" / "launch" / "response-templates.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "## Skyvern VNC and CDP debug integration" in templates
     reply = templates.split(
@@ -3578,7 +3578,7 @@ def test_response_templates_link_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
     templates = (
         project_root / "docs" / "launch" / "response-templates.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## Can I contribute a small fix?" in templates
     reply = templates.split("## Can I contribute a small fix?", 1)[1].split(
         "## Can you share JSON diagnostics?", 1
@@ -3598,7 +3598,7 @@ def test_response_templates_link_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
     templates = (
         project_root / "docs" / "launch" / "response-templates.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     reply = templates.split("## Can I contribute a small fix?", 1)[1].split(
         "## Can you share JSON diagnostics?", 1
     )[0]
@@ -3610,7 +3610,7 @@ def test_response_templates_link_security_policy_for_sensitive_reports():
 
 def test_owner_publish_queue_includes_json_cli_reply_workflow():
     project_root = Path(__file__).resolve().parents[1]
-    queue = (project_root / "docs" / "launch" / "owner-publish-queue.md").read_text()
+    queue = (project_root / "docs" / "launch" / "owner-publish-queue.md").read_text(encoding="utf-8")
     reply_workflow = queue.split("## Reply Workflow", 1)[1].split(
         "## Metrics Check", 1
     )[0]
@@ -3638,7 +3638,7 @@ browsertrace show <run_id> --json
 
 def test_owner_publish_queue_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    queue = (project_root / "docs" / "launch" / "owner-publish-queue.md").read_text()
+    queue = (project_root / "docs" / "launch" / "owner-publish-queue.md").read_text(encoding="utf-8")
     reply_workflow = queue.split("## Reply Workflow", 1)[1].split(
         "## Metrics Check", 1
     )[0]
@@ -3650,7 +3650,7 @@ def test_owner_publish_queue_links_security_policy_for_sensitive_reports():
 
 def test_owner_publish_queue_links_stack_debugging_guides_for_replies():
     project_root = Path(__file__).resolve().parents[1]
-    queue = (project_root / "docs" / "launch" / "owner-publish-queue.md").read_text()
+    queue = (project_root / "docs" / "launch" / "owner-publish-queue.md").read_text(encoding="utf-8")
     reply_workflow = queue.split("## Reply Workflow", 1)[1].split(
         "## Metrics Check", 1
     )[0]
@@ -3693,7 +3693,7 @@ def test_owner_publish_queue_includes_aos_mapping_reply_note():
 
 def test_owner_publish_queue_records_current_awesome_list_pr_count():
     project_root = Path(__file__).resolve().parents[1]
-    queue = (project_root / "docs" / "launch" / "owner-publish-queue.md").read_text()
+    queue = (project_root / "docs" / "launch" / "owner-publish-queue.md").read_text(encoding="utf-8")
 
     assert "fifteen focused PRs are open" in queue
     assert "the three prepared PRs" not in queue
@@ -3719,7 +3719,7 @@ def test_owner_docs_mark_pypi_publish_complete():
     ]
 
     for path in docs:
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         assert "https://pypi.org/project/browsertrace/" in text
         assert "https://pypi.org/pypi/browsertrace/json" in text
         assert "HTTP 200" in text or "已发布" in text
@@ -3728,7 +3728,7 @@ def test_owner_docs_mark_pypi_publish_complete():
 
 def test_day_1_publish_packet_includes_json_cli_reply_shortcut():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-1-publish-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-1-publish-packet.md").read_text(encoding="utf-8")
     reply_shortcuts = packet.split("## Reply Shortcuts", 1)[1].split(
         "## Day 1 Log", 1
     )[0]
@@ -3779,7 +3779,7 @@ def test_day_1_publish_packet_links_stack_debugging_guides_for_replies():
 
 def test_day_1_publish_packet_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-1-publish-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-1-publish-packet.md").read_text(encoding="utf-8")
     reply_shortcuts = packet.split("## Reply Shortcuts", 1)[1].split(
         "## Day 1 Log", 1
     )[0]
@@ -3793,7 +3793,7 @@ def test_day_3_targeted_communities_include_json_cli_reply_note():
     project_root = Path(__file__).resolve().parents[1]
     packet = (
         project_root / "docs" / "launch" / "day-3-targeted-communities-packet.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     triage = packet.split("## Triage After Posting", 1)[1].split("## Stop Rules", 1)[0]
     recipe = """```bash
 browsertrace doctor --json
@@ -3869,7 +3869,7 @@ def test_day_3_targeted_communities_tracks_directory_submission_queue():
     project_root = Path(__file__).resolve().parents[1]
     packet = (
         project_root / "docs" / "launch" / "day-3-targeted-communities-packet.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     directories = packet.split("## Directories And Newsletters", 1)[1].split(
         "Pitch:", 1
     )[0]
@@ -3908,7 +3908,7 @@ def test_day_3_targeted_communities_tracks_directory_submission_queue():
 def test_directory_submission_sheet_includes_pypi_trial_after_publish():
     project_root = Path(__file__).resolve().parents[1]
     pypi_spec = "browsertrace[ui]"
-    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text()
+    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text(encoding="utf-8")
 
     assert "pypi" in sheet.lower()
     assert f'uvx --from "{pypi_spec}" browsertrace doctor' in sheet
@@ -3917,7 +3917,7 @@ def test_directory_submission_sheet_includes_pypi_trial_after_publish():
 
 def test_directory_submission_sheet_records_agentfirst_pr_submission():
     project_root = Path(__file__).resolve().parents[1]
-    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text()
+    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text(encoding="utf-8")
 
     assert "agentfirst.directory" in sheet
     assert "https://github.com/bradvin/agentfirst.directory/pull/30" in sheet
@@ -3926,7 +3926,7 @@ def test_directory_submission_sheet_records_agentfirst_pr_submission():
 
 def test_directory_submission_sheet_records_agentsindex_owner_submission():
     project_root = Path(__file__).resolve().parents[1]
-    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text()
+    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text(encoding="utf-8")
 
     assert "AgentsIndex" in sheet
     assert "https://agentsindex.ai/submit" in sheet
@@ -3953,8 +3953,8 @@ def test_directory_submission_sheet_avoids_stale_awesome_list_pr_count():
 
 def test_directory_submission_sheet_records_current_directory_submission_blockers():
     project_root = Path(__file__).resolve().parents[1]
-    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text()
-    targets = (project_root / "docs" / "launch" / "outreach-targets.md").read_text()
+    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text(encoding="utf-8")
+    targets = (project_root / "docs" / "launch" / "outreach-targets.md").read_text(encoding="utf-8")
 
     for text in [sheet, targets]:
         assert "AgentKart" in text
@@ -4000,7 +4000,7 @@ def test_directory_submission_sheet_records_current_directory_submission_blocker
 
 def test_directory_submission_sheet_includes_agdex_email_template():
     project_root = Path(__file__).resolve().parents[1]
-    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text()
+    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text(encoding="utf-8")
 
     assert "## AgDex Email Draft" in sheet
     agdex = sheet.split("## AgDex Email Draft", 1)[1].split(
@@ -4024,7 +4024,7 @@ def test_directory_submission_sheet_includes_agdex_email_template():
 
 def test_directory_submission_sheet_includes_console_dev_email_template():
     project_root = Path(__file__).resolve().parents[1]
-    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text()
+    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text(encoding="utf-8")
 
     assert "## console.dev Email Draft" in sheet
     console = sheet.split("## console.dev Email Draft", 1)[1].split(
@@ -4056,7 +4056,7 @@ def test_owner_short_checklists_surface_ready_email_submissions():
         ("docs/launch/owner-next-actions.md", "## 1. PyPI Published"),
         ("docs/launch/owner-next-actions.zh-CN.md", "## 1. PyPI 已发布"),
     ]:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         unblock = text.split("## 10", 1)[1].split(next_heading, 1)[0]
 
         assert "docs/launch/directory-submission-sheet.md" in unblock, relpath
@@ -4199,7 +4199,7 @@ def test_launch_monitoring_runbook_covers_current_targets():
 
 def test_directory_submission_sheet_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text()
+    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text(encoding="utf-8")
     assert "## Contribution Reply" in sheet
     contribution_reply = sheet.split("## Contribution Reply", 1)[1].split(
         "## Troubleshooting Reply", 1
@@ -4220,7 +4220,7 @@ def test_directory_submission_sheet_links_first_pr_recipe_for_small_contribution
 def test_product_hunt_packet_includes_current_trial_and_contribution_paths():
     project_root = Path(__file__).resolve().parents[1]
     pypi_spec = "browsertrace[ui]"
-    packet = (project_root / "docs" / "launch" / "day-4-product-hunt-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-4-product-hunt-packet.md").read_text(encoding="utf-8")
     contributor_block = packet.split("Good first issue queue for contributors:", 1)[
         1
     ].split("Description:", 1)[0]
@@ -4239,7 +4239,7 @@ def test_product_hunt_packet_includes_current_trial_and_contribution_paths():
 
 def test_show_hn_packet_links_current_good_first_issue():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-2-show-hn-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-2-show-hn-packet.md").read_text(encoding="utf-8")
     contribution_reply = packet.split("Can I contribute a small fix?", 1)[
         1
     ].split("## Troubleshooting Reply", 1)[0]
@@ -4256,7 +4256,7 @@ def test_show_hn_packet_links_current_good_first_issue():
 
 def test_show_hn_packet_uses_concrete_browser_use_failure_shape():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-2-show-hn-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-2-show-hn-packet.md").read_text(encoding="utf-8")
     first_comment = packet.split("## First Comment Draft", 1)[1].split(
         "## Response Rules", 1
     )[0]
@@ -4321,7 +4321,7 @@ def test_show_hn_packet_includes_aos_mapping_research_note():
 
 def test_product_hunt_packet_includes_json_cli_reply_note():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-4-product-hunt-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-4-product-hunt-packet.md").read_text(encoding="utf-8")
     reply_notes = packet.split("## Reply Notes", 1)[1].split("## Metrics", 1)[0]
     recipe = """```bash
 browsertrace doctor --json
@@ -4386,7 +4386,7 @@ def test_product_hunt_packet_includes_aos_mapping_research_note():
 
 def test_product_hunt_packet_uses_concrete_browser_use_failure_shape():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-4-product-hunt-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-4-product-hunt-packet.md").read_text(encoding="utf-8")
     maker_comment = packet.split("## Maker Comment", 1)[1].split(
         "## Launch Share Copy", 1
     )[0]
@@ -4406,7 +4406,7 @@ def test_product_hunt_packet_uses_concrete_browser_use_failure_shape():
 
 def test_product_hunt_packet_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-4-product-hunt-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-4-product-hunt-packet.md").read_text(encoding="utf-8")
     reply_notes = packet.split("## Reply Notes", 1)[1].split("## Metrics", 1)[0]
 
     assert "https://github.com/aaronlab/browsertrace/blob/main/SECURITY.md" in reply_notes
@@ -4418,10 +4418,10 @@ def test_owner_launch_packets_include_media_alt_text():
     project_root = Path(__file__).resolve().parents[1]
     day_1 = (
         project_root / "docs" / "launch" / "day-1-publish-packet.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     product_hunt = (
         project_root / "docs" / "launch" / "day-4-product-hunt-packet.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     for packet in [day_1, product_hunt]:
         assert "## Media Alt Text" in packet
@@ -4437,7 +4437,7 @@ def test_owner_launch_packets_include_media_alt_text():
 
 def test_show_hn_packet_includes_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-2-show-hn-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-2-show-hn-packet.md").read_text(encoding="utf-8")
     assert "## Troubleshooting Reply" in packet
     reply = packet.split("## Troubleshooting Reply", 1)[1].split("## Metrics", 1)[0]
     recipe = """```bash
@@ -4460,7 +4460,7 @@ browsertrace show <run_id> --json
 
 def test_show_hn_packet_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    packet = (project_root / "docs" / "launch" / "day-2-show-hn-packet.md").read_text()
+    packet = (project_root / "docs" / "launch" / "day-2-show-hn-packet.md").read_text(encoding="utf-8")
     reply = packet.split("## Troubleshooting Reply", 1)[1].split("## Metrics", 1)[0]
 
     assert "https://github.com/aaronlab/browsertrace/blob/main/SECURITY.md" in reply
@@ -4470,7 +4470,7 @@ def test_show_hn_packet_links_security_policy_for_sensitive_reports():
 
 def test_channel_copy_includes_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
-    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text()
+    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text(encoding="utf-8")
     assert "## Troubleshooting Reply" in copy
     reply = copy.split("## Troubleshooting Reply", 1)[1].split("## X", 1)[0]
     recipe = """```bash
@@ -4540,7 +4540,7 @@ def test_channel_copy_includes_aos_mapping_research_note():
 
 def test_channel_copy_includes_fresh_browser_use_debugging_angle():
     project_root = Path(__file__).resolve().parents[1]
-    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text()
+    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text(encoding="utf-8")
     section = copy.split("## Fresh Browser Use Debugging Angle", 1)[1].split(
         "## X", 1
     )[0]
@@ -4597,7 +4597,7 @@ def test_channel_copy_includes_fresh_chinese_computer_use_recovery_angle():
 
 def test_channel_copy_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text()
+    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text(encoding="utf-8")
     reply = copy.split("## Troubleshooting Reply", 1)[1].split("## X", 1)[0]
 
     assert "https://github.com/aaronlab/browsertrace/blob/main/SECURITY.md" in reply
@@ -4607,7 +4607,7 @@ def test_channel_copy_links_security_policy_for_sensitive_reports():
 
 def test_channel_copy_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text()
+    copy = (project_root / "docs" / "launch" / "channel-copy.md").read_text(encoding="utf-8")
     assert "## Contribution Reply" in copy
     contribution_reply = copy.split("## Contribution Reply", 1)[1].split(
         "## Troubleshooting Reply", 1
@@ -4625,7 +4625,7 @@ def test_channel_copy_links_first_pr_recipe_for_small_contributions():
 
 def test_tutorial_post_includes_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
-    tutorial = (project_root / "docs" / "launch" / "tutorial-post.md").read_text()
+    tutorial = (project_root / "docs" / "launch" / "tutorial-post.md").read_text(encoding="utf-8")
     assert "## Reply To Troubleshooting Questions" in tutorial
     reply = tutorial.split("## Reply To Troubleshooting Questions", 1)[1].split(
         "## Try it", 1
@@ -4649,7 +4649,7 @@ browsertrace show <run_id> --json
 
 def test_tutorial_post_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    tutorial = (project_root / "docs" / "launch" / "tutorial-post.md").read_text()
+    tutorial = (project_root / "docs" / "launch" / "tutorial-post.md").read_text(encoding="utf-8")
     reply = tutorial.split("## Reply To Troubleshooting Questions", 1)[1].split(
         "## Try it", 1
     )[0]
@@ -4726,7 +4726,7 @@ def test_tutorial_post_includes_aos_mapping_research_note():
 
 def test_tutorial_post_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    tutorial = (project_root / "docs" / "launch" / "tutorial-post.md").read_text()
+    tutorial = (project_root / "docs" / "launch" / "tutorial-post.md").read_text(encoding="utf-8")
     assert "## Reply To Contribution Questions" in tutorial
     reply = tutorial.split("## Reply To Contribution Questions", 1)[1].split(
         "## Reply To Troubleshooting Questions", 1
@@ -4746,7 +4746,7 @@ def test_chinese_tutorial_post_includes_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
     tutorial = (
         project_root / "docs" / "launch" / "chinese-tutorial-post.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## 回复本地首跑 / CI / agent 调试问题" in tutorial
     reply = tutorial.split("## 回复本地首跑 / CI / agent 调试问题", 1)[1].split(
         "## Links", 1
@@ -4772,7 +4772,7 @@ def test_chinese_tutorial_post_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
     tutorial = (
         project_root / "docs" / "launch" / "chinese-tutorial-post.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     reply = tutorial.split("## 回复本地首跑 / CI / agent 调试问题", 1)[1].split(
         "## Links", 1
     )[0]
@@ -4857,7 +4857,7 @@ def test_chinese_tutorial_post_links_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
     tutorial = (
         project_root / "docs" / "launch" / "chinese-tutorial-post.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## 回复小贡献问题" in tutorial
     reply = tutorial.split("## 回复小贡献问题", 1)[1].split(
         "## 回复本地首跑 / CI / agent 调试问题", 1
@@ -4875,7 +4875,7 @@ def test_chinese_tutorial_post_links_first_pr_recipe_for_small_contributions():
 
 def test_owner_next_actions_include_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
-    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text()
+    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text(encoding="utf-8")
     assert "## Reply To Troubleshooting Questions" in checklist
     reply = checklist.split("## Reply To Troubleshooting Questions", 1)[1].split(
         "## 8. Record Metrics After Each Action", 1
@@ -4921,7 +4921,7 @@ def test_owner_next_actions_link_stack_debugging_guides_for_owner_replies():
 
 def test_owner_next_actions_preserves_external_awesome_list_pr_numbers():
     project_root = Path(__file__).resolve().parents[1]
-    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text()
+    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text(encoding="utf-8")
     awesome_prs = checklist.split(
         "## 7. Monitor High-Fit GitHub Awesome List PRs", 1
     )[1].split("## Reply To Contribution Questions", 1)[0]
@@ -4948,7 +4948,7 @@ def test_chinese_owner_next_actions_preserves_external_awesome_list_pr_numbers()
     project_root = Path(__file__).resolve().parents[1]
     checklist = (
         project_root / "docs" / "launch" / "owner-next-actions.zh-CN.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     awesome_prs = checklist.split("已经打开的 PR：", 1)[1].split(
         "目录/newsletter 跟踪 issue", 1
     )[0]
@@ -4973,7 +4973,7 @@ def test_chinese_owner_next_actions_preserves_external_awesome_list_pr_numbers()
 
 def test_owner_next_actions_link_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
-    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text()
+    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text(encoding="utf-8")
     reply = checklist.split("## Reply To Troubleshooting Questions", 1)[1].split(
         "## 8. Record Metrics After Each Action", 1
     )[0]
@@ -4985,7 +4985,7 @@ def test_owner_next_actions_link_security_policy_for_sensitive_reports():
 
 def test_owner_next_actions_link_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text()
+    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text(encoding="utf-8")
     assert "## Reply To Contribution Questions" in checklist
     reply = checklist.split("## Reply To Contribution Questions", 1)[1].split(
         "## Reply To Troubleshooting Questions", 1
@@ -5003,7 +5003,7 @@ def test_owner_next_actions_link_first_pr_recipe_for_small_contributions():
 
 def test_owner_next_actions_set_good_first_issue_claim_window():
     project_root = Path(__file__).resolve().parents[1]
-    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text()
+    checklist = (project_root / "docs" / "launch" / "owner-next-actions.md").read_text(encoding="utf-8")
     reply = checklist.split("## Reply To Contribution Questions", 1)[1].split(
         "## Reply To Troubleshooting Questions", 1
     )[0]
@@ -5028,7 +5028,7 @@ def test_active_contribution_copy_uses_good_first_queue_after_claim():
         "docs/launch/owner-next-actions.zh-CN.md",
         "docs/launch/response-templates.md",
     ]:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         assert queue_url in text, relpath
         assert "https://github.com/aaronlab/browsertrace/issues/248" not in text, relpath
         assert "#248: Docs: add environment variable example values" not in text, relpath
@@ -5038,7 +5038,7 @@ def test_chinese_owner_next_actions_include_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
     checklist = (
         project_root / "docs" / "launch" / "owner-next-actions.zh-CN.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## 回复本地首跑 / CI / agent 调试问题" in checklist
     reply = checklist.split("## 回复本地首跑 / CI / agent 调试问题", 1)[1].split(
         "## 7. 每做完一个动作就记录指标", 1
@@ -5064,7 +5064,7 @@ def test_chinese_owner_next_actions_link_security_policy_for_sensitive_reports()
     project_root = Path(__file__).resolve().parents[1]
     checklist = (
         project_root / "docs" / "launch" / "owner-next-actions.zh-CN.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     reply = checklist.split("## 回复本地首跑 / CI / agent 调试问题", 1)[1].split(
         "## 7. 每做完一个动作就记录指标", 1
     )[0]
@@ -5125,7 +5125,7 @@ def test_chinese_owner_next_actions_link_first_pr_recipe_for_small_contributions
     project_root = Path(__file__).resolve().parents[1]
     checklist = (
         project_root / "docs" / "launch" / "owner-next-actions.zh-CN.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## 回复小贡献问题" in checklist
     reply = checklist.split("## 回复小贡献问题", 1)[1].split(
         "## 回复本地首跑 / CI / agent 调试问题", 1
@@ -5145,7 +5145,7 @@ def test_chinese_owner_next_actions_set_good_first_issue_claim_window():
     project_root = Path(__file__).resolve().parents[1]
     checklist = (
         project_root / "docs" / "launch" / "owner-next-actions.zh-CN.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     reply = checklist.split("## 回复小贡献问题", 1)[1].split(
         "## 回复本地首跑 / CI / agent 调试问题", 1
     )[0]
@@ -5159,7 +5159,7 @@ def test_chinese_owner_next_actions_set_good_first_issue_claim_window():
 
 def test_directory_submission_sheet_includes_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
-    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text()
+    sheet = (project_root / "docs" / "launch" / "directory-submission-sheet.md").read_text(encoding="utf-8")
     assert "## Troubleshooting Reply" in sheet
     reply = sheet.split("## Troubleshooting Reply", 1)[1].split("## Tracking", 1)[0]
     recipe = """```bash
@@ -5226,7 +5226,7 @@ def test_directory_submission_sheet_includes_aos_mapping_research_note():
 
 def test_outreach_targets_include_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
-    targets = (project_root / "docs" / "launch" / "outreach-targets.md").read_text()
+    targets = (project_root / "docs" / "launch" / "outreach-targets.md").read_text(encoding="utf-8")
     assert "## Troubleshooting Reply" in targets
     reply = targets.split("## Troubleshooting Reply", 1)[1].split(
         "## First Targeted Community Posts", 1
@@ -5295,7 +5295,7 @@ def test_outreach_targets_include_aos_mapping_research_note():
 
 def test_outreach_targets_records_current_awesome_list_pr_count():
     project_root = Path(__file__).resolve().parents[1]
-    targets = (project_root / "docs" / "launch" / "outreach-targets.md").read_text()
+    targets = (project_root / "docs" / "launch" / "outreach-targets.md").read_text(encoding="utf-8")
 
     assert "Twelve focused PRs are already open" in targets
     assert "E2B CLA check has passed" in targets
@@ -5305,7 +5305,7 @@ def test_outreach_targets_records_current_awesome_list_pr_count():
 
 def test_outreach_targets_link_first_pr_recipe_for_small_contributions():
     project_root = Path(__file__).resolve().parents[1]
-    targets = (project_root / "docs" / "launch" / "outreach-targets.md").read_text()
+    targets = (project_root / "docs" / "launch" / "outreach-targets.md").read_text(encoding="utf-8")
     assert "## Contribution Reply" in targets
     contribution_reply = targets.split("## Contribution Reply", 1)[1].split(
         "## Troubleshooting Reply", 1
@@ -5325,7 +5325,7 @@ def test_search_indexing_submission_links_first_pr_recipe_for_small_contribution
     project_root = Path(__file__).resolve().parents[1]
     submission = (
         project_root / "docs" / "launch" / "search-indexing-submission.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## Contribution Reply" in submission
     contribution_reply = submission.split("## Contribution Reply", 1)[1].split(
         "## Troubleshooting Reply", 1
@@ -5345,7 +5345,7 @@ def test_search_indexing_submission_includes_json_cli_troubleshooting_reply():
     project_root = Path(__file__).resolve().parents[1]
     submission = (
         project_root / "docs" / "launch" / "search-indexing-submission.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## Troubleshooting Reply" in submission
     reply = submission.split("## Troubleshooting Reply", 1)[1].split(
         "## Google Search Console", 1
@@ -5407,7 +5407,7 @@ def test_bug_report_template_requests_json_cli_troubleshooting_checks():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "bug_report.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "issue reports, CI, or AI/coding-agent troubleshooting" in template
     assert "CONTRIBUTING.md#first-pr-recipe" in template
@@ -5423,7 +5423,7 @@ def test_bug_report_template_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "bug_report.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "SECURITY.md" in template
     assert "security-sensitive reports" in template
@@ -5434,7 +5434,7 @@ def test_bug_report_template_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "bug_report.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     stack_guides = [
         "Browser Use guide: https://aaronlab.github.io/browsertrace/browser-use-debugging.html",
@@ -5455,7 +5455,7 @@ def test_integration_request_template_requests_json_cli_troubleshooting_checks()
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "integration_request.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "integration requests, CI, or AI/coding-agent troubleshooting" in template
     assert "CONTRIBUTING.md#first-pr-recipe" in template
@@ -5471,7 +5471,7 @@ def test_integration_request_template_links_security_policy_for_sensitive_report
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "integration_request.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "SECURITY.md" in template
     assert "security-sensitive reports" in template
@@ -5482,7 +5482,7 @@ def test_integration_request_template_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "integration_request.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     stack_guides = [
         "Browser Use guide: https://aaronlab.github.io/browsertrace/browser-use-debugging.html",
@@ -5503,7 +5503,7 @@ def test_feature_request_template_links_first_pr_recipe():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "feature_request.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "Describe the smallest useful version of the feature." in template
     assert "CONTRIBUTING.md#first-pr-recipe" in template
@@ -5517,7 +5517,7 @@ def test_feature_request_template_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "feature_request.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert (
         "[Security Policy](https://github.com/aaronlab/browsertrace/blob/main/SECURITY.md)"
@@ -5534,7 +5534,7 @@ def test_feature_request_template_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "feature_request.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     stack_guides = [
         "Browser Use guide: https://aaronlab.github.io/browsertrace/browser-use-debugging.html",
@@ -5555,7 +5555,7 @@ def test_cloud_interest_template_links_first_pr_recipe():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "cloud_interest.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "Team workflow" in template
     assert "Data and security constraints" in template
@@ -5570,7 +5570,7 @@ def test_cloud_interest_template_links_security_policy_for_sensitive_reports():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "cloud_interest.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "SECURITY.md" in template
     assert "security-sensitive reports" in template
@@ -5581,7 +5581,7 @@ def test_cloud_interest_template_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
     template = (
         project_root / ".github" / "ISSUE_TEMPLATE" / "cloud_interest.yml"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     stack_guides = [
         "Browser Use guide: https://aaronlab.github.io/browsertrace/browser-use-debugging.html",
@@ -5600,7 +5600,7 @@ def test_cloud_interest_template_links_stack_debugging_guides():
 
 def test_pull_request_template_requests_json_cli_troubleshooting_checks():
     project_root = Path(__file__).resolve().parents[1]
-    template = (project_root / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text()
+    template = (project_root / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text(encoding="utf-8")
 
     assert "issue reports, CI, or AI/coding-agent troubleshooting" in template
     assert "browsertrace doctor --json" in template
@@ -5612,7 +5612,7 @@ def test_pull_request_template_requests_json_cli_troubleshooting_checks():
 
 def test_pull_request_template_prompts_for_real_contributor_details():
     project_root = Path(__file__).resolve().parents[1]
-    template = (project_root / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text()
+    template = (project_root / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text(encoding="utf-8")
 
     assert "<summary>" not in template
     assert "Replace every placeholder before requesting review." in template
@@ -5626,7 +5626,7 @@ def test_pull_request_template_prompts_for_real_contributor_details():
 
 def test_pull_request_template_links_security_policy_for_sensitive_changes():
     project_root = Path(__file__).resolve().parents[1]
-    template = (project_root / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text()
+    template = (project_root / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text(encoding="utf-8")
 
     assert "SECURITY.md" in template
     assert "security-sensitive changes" in template
@@ -5635,7 +5635,7 @@ def test_pull_request_template_links_security_policy_for_sensitive_changes():
 
 def test_pull_request_template_links_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
-    template = (project_root / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text()
+    template = (project_root / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text(encoding="utf-8")
 
     stack_guides = [
         "Browser Use guide: https://aaronlab.github.io/browsertrace/browser-use-debugging.html",
@@ -5673,7 +5673,7 @@ def test_pull_request_template_has_research_only_aos_mapping_note():
 
 def test_security_policy_has_private_report_path_without_email_placeholder():
     project_root = Path(__file__).resolve().parents[1]
-    policy = (project_root / "SECURITY.md").read_text()
+    policy = (project_root / "SECURITY.md").read_text(encoding="utf-8")
     normalized = " ".join(policy.split())
 
     assert "private GitHub vulnerability report" in normalized
@@ -5684,7 +5684,7 @@ def test_security_policy_has_private_report_path_without_email_placeholder():
 
 def test_security_policy_links_non_sensitive_stack_debugging_guides():
     project_root = Path(__file__).resolve().parents[1]
-    policy = (project_root / "SECURITY.md").read_text()
+    policy = (project_root / "SECURITY.md").read_text(encoding="utf-8")
     normalized = " ".join(policy.split())
 
     stack_guides = [
@@ -5711,7 +5711,7 @@ def test_awesome_list_submission_notes_include_trial_and_demo_links():
     )
     notes = (
         project_root / "docs" / "launch" / "github-awesome-list-submissions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "https://aaronlab.github.io/browsertrace/" in notes
     assert "browsertrace-demo-public.html" in notes
@@ -5723,7 +5723,7 @@ def test_awesome_list_submission_notes_link_first_pr_recipe_for_contributors():
     project_root = Path(__file__).resolve().parents[1]
     notes = (
         project_root / "docs" / "launch" / "github-awesome-list-submissions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## Contribution Reply" in notes
     contribution_reply = notes.split("## Contribution Reply", 1)[1].split(
         "## Troubleshooting Reply", 1
@@ -5743,7 +5743,7 @@ def test_awesome_list_submission_notes_include_json_cli_reviewer_reply():
     project_root = Path(__file__).resolve().parents[1]
     notes = (
         project_root / "docs" / "launch" / "github-awesome-list-submissions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     assert "## Troubleshooting Reply" in notes
     reply = notes.split("## Troubleshooting Reply", 1)[1].split(
         "## Recommended Order", 1
@@ -5797,7 +5797,7 @@ def test_awesome_list_submission_notes_record_steel_web_agents_pr():
     project_root = Path(__file__).resolve().parents[1]
     notes = (
         project_root / "docs" / "launch" / "github-awesome-list-submissions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "steel-dev/awesome-web-agents" in notes
     assert "https://github.com/steel-dev/awesome-web-agents/pull/56" in notes
@@ -5810,7 +5810,7 @@ def test_awesome_list_submission_notes_record_harness_engineering_pr():
     project_root = Path(__file__).resolve().parents[1]
     notes = (
         project_root / "docs" / "launch" / "github-awesome-list-submissions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "ai-boost/awesome-harness-engineering" in notes
     assert "https://github.com/ai-boost/awesome-harness-engineering/pull/23" in notes
@@ -5823,7 +5823,7 @@ def test_awesome_list_submission_notes_record_autonomous_web_pr():
     project_root = Path(__file__).resolve().parents[1]
     notes = (
         project_root / "docs" / "launch" / "github-awesome-list-submissions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "Agent-Tools/awesome-autonomous-web" in notes
     assert "https://github.com/Agent-Tools/awesome-autonomous-web/pull/21" in notes
@@ -5836,7 +5836,7 @@ def test_awesome_list_submission_notes_record_e2b_ai_sdks_pr():
     project_root = Path(__file__).resolve().parents[1]
     notes = (
         project_root / "docs" / "launch" / "github-awesome-list-submissions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "e2b-dev/awesome-ai-sdks" in notes
     assert "https://github.com/e2b-dev/awesome-ai-sdks/pull/187" in notes
@@ -5849,7 +5849,7 @@ def test_awesome_list_submission_notes_record_ranpox_computer_use_pr():
     project_root = Path(__file__).resolve().parents[1]
     notes = (
         project_root / "docs" / "launch" / "github-awesome-list-submissions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "ranpox/awesome-computer-use" in notes
     assert "https://github.com/ranpox/awesome-computer-use/pull/24" in notes
@@ -5887,7 +5887,7 @@ def test_targeted_outreach_copy_includes_uvx_trial_before_pypi():
         "docs/launch/day-3-targeted-communities-packet.md",
         "docs/launch/outreach-targets.md",
     ]:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         assert f'uvx --from "{pypi_spec}" browsertrace doctor' in text, relpath
         assert f'uvx --from "{pypi_spec}" browsertrace demo' in text, relpath
         assert "pypi" in text.lower(), relpath
@@ -5903,7 +5903,7 @@ def test_owner_next_actions_include_uvx_fallback_before_pypi():
         "docs/launch/owner-next-actions.md",
         "docs/launch/owner-next-actions.zh-CN.md",
     ]:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         assert f'uvx --from "{pypi_spec}" browsertrace demo' in text, relpath
         assert "pypi" in text.lower(), relpath
 
@@ -5917,7 +5917,7 @@ def test_owner_next_actions_surface_launch_media_alt_text():
     ]
 
     for relpath, phrase, end_marker in expected:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         unblock = text.split("10", 1)[1].split(end_marker, 1)[0]
         assert "docs/launch/day-1-publish-packet.md#media-alt-text" in unblock, relpath
         assert phrase in unblock, relpath
@@ -5940,7 +5940,7 @@ def test_owner_next_actions_use_hard_success_check():
         "docs/launch/owner-next-actions.md",
         "docs/launch/owner-next-actions.zh-CN.md",
     ]:
-        text = (project_root / relpath).read_text()
+        text = (project_root / relpath).read_text(encoding="utf-8")
         assert expected in text, relpath
         assert "--json stargazerCount,url,homepageUrl,owner" not in text, relpath
 
@@ -5949,13 +5949,13 @@ def test_owner_docs_mark_social_preview_uploaded():
     project_root = Path(__file__).resolve().parents[1]
     owner_next_actions = (
         project_root / "docs" / "launch" / "owner-next-actions.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     owner_next_actions_zh = (
         project_root / "docs" / "launch" / "owner-next-actions.zh-CN.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     owner_publish_queue = (
         project_root / "docs" / "launch" / "owner-publish-queue.md"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     assert "Social preview: completed" in owner_next_actions
     assert "usesCustomOpenGraphImage=true" in owner_next_actions
@@ -5972,8 +5972,8 @@ def test_launch_control_room_has_current_audit_and_uvx_fallback():
     pypi_spec = (
         "browsertrace[ui]"
     )
-    launch = (project_root / "LAUNCH.md").read_text()
-    metrics_log = (project_root / "docs" / "launch" / "metrics-log.md").read_text()
+    launch = (project_root / "LAUNCH.md").read_text(encoding="utf-8")
+    metrics_log = (project_root / "docs" / "launch" / "metrics-log.md").read_text(encoding="utf-8")
     latest_metrics_row = next(
         line for line in reversed(metrics_log.splitlines()) if line.startswith("| 20")
     )
